@@ -23,9 +23,12 @@ namespace GMS.Application.Gathering.Commands.SendInvitation
 
             if (member is null || gathering is null) return Unit.Value;
 
-            var invitation = gathering.SendInvitation(member);
+            var invitationResult = gathering.SendInvitation(member);
+            if(invitationResult.IsFailure) 
+                //log here
+                return Unit.Value;
 
-            _invitationRepository.Add(invitation);
+            _invitationRepository.Add(invitationResult.Value);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

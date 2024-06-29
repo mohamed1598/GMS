@@ -24,7 +24,7 @@ namespace GMS.Application.Gathering.Commands.CreateGathering
             if (member is null)
                 return Unit.Value;
 
-            var gathering = GatheringEntity.Gathering.Create(
+            var gatheringResult = GatheringEntity.Gathering.Create(
                 Guid.NewGuid(),
                 member,
                 request.Type,
@@ -33,8 +33,10 @@ namespace GMS.Application.Gathering.Commands.CreateGathering
                 request.Location,
                 request.MaximumNumberOfAttendees,
                 request.InvitationValidBeforeInHours);
-
-            _gatheringRepository.Add(gathering);
+            if (gatheringResult.IsFailure)
+                //log here 
+                return Unit.Value;
+            _gatheringRepository.Add(gatheringResult.Value);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
