@@ -9,6 +9,7 @@ namespace GMS.Domain.Abstractions
 {
     public interface IMemberRepository
     {
+        void Add(Member member);
         Task<Member> GetByIdAsync(Guid memberId, CancellationToken cancellationToken);
     }
 }

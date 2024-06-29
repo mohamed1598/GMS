@@ -16,5 +16,5 @@ namespace GMS.Application.Gathering.Commands.CreateGathering
         string Name,
         string? Location,
         int? MaximumNumberOfAttendees,
-        int? InvitationValidBeforeInHours):IRequest<Unit>;
+        int? InvitationValidBeforeInHours) : IRequest<Unit>;
 }

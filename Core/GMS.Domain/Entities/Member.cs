@@ -1,4 +1,5 @@
 ﻿using GMS.Domain.Primitives;
+using GMS.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace GMS.Domain.Entities
 {
     public sealed class Member:Entity
     {
-        public Member(Guid id,string firstName, string lastName, string email):base(id)
+        public Member(Guid id,FirstName firstName, string lastName, string email):base(id)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -20,7 +21,7 @@ namespace GMS.Domain.Entities
             
         }
 
-        public string FirstName { get; set; } = null!;
+        public FirstName FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public string Email { get; set; } = null!;
     }
