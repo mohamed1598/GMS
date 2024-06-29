@@ -22,11 +22,21 @@ namespace GMS.Application.Members.Commands.CreateMember
                 //log error
                 return Unit.Value;
 
+            var lastNameResult = LastName.Create(request.LastName);
+            if (lastNameResult.IsFailure)
+                //log error
+                return Unit.Value;
+
+            var emailResult = Email.Create(request.Email);
+            if (emailResult.IsFailure)
+                //log error
+                return Unit.Value;
+
             var member = new Member(
-                Guid.NewGuid(),
+                MemberId.Create(Guid.NewGuid()).Value,
                 firstNameResult.Value,
-                request.LastName,
-                request.Email);
+                lastNameResult.Value,
+                emailResult.Value);
 
             _memberRepository.Add(member);
 

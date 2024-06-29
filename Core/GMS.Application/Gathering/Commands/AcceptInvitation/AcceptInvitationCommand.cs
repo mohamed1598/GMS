@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace GMS.Application.Gathering.Commands.AcceptInvitation
 {
-    public sealed record AcceptInvitationCommand(Guid InvitationId) : IRequest<Unit>;
+    public sealed record AcceptInvitationCommand(Guid GatheringId,Guid InvitationId) : IRequest<Unit>;
 }

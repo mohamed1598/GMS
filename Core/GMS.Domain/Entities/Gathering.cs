@@ -1,6 +1,8 @@
-﻿using GMS.Domain.Errors;
+﻿using GMS.Domain.DomainEvents;
+using GMS.Domain.Errors;
 using GMS.Domain.Primitives;
 using GMS.Domain.Shared;
+using GMS.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,16 +10,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace GMS.Domain.Entities;
-public sealed class Gathering:Entity
+public sealed class Gathering:AggregateRoot<GatheringId>
 {
     private readonly List<Invitation> _invitations = [];
     private readonly List<Attendee> _attendees = [];
     internal Gathering(
-        Guid id,
+        GatheringId id,
         Member creator,
         GatheringType type,
         DateTime schedualedAtUtc,
-        string name,
+        Name name,
         string? location):base(id)
     {
         Creator = creator;
@@ -27,13 +29,13 @@ public sealed class Gathering:Entity
         Location = location;
     }
 
-    protected Gathering():base(Guid.NewGuid())
+    protected Gathering():base(GatheringId.Create(Guid.NewGuid()).Value)
     {
         
     }
     public Member Creator { get; private set; }
     public GatheringType Type { get; private set; }
-    public string Name { get; private set; }
+    public Name Name { get; private set; }
     public DateTime ScheduledAtUtc { get; private set; }
     public string? Location { get; private set; }
     public int? MaximumNumberOfAttendees { get; private set; }
@@ -47,13 +49,18 @@ public sealed class Gathering:Entity
         Member creator,
         GatheringType type,
         DateTime schedualedAtUtc,
-        string name,
+        Name name,
         string? location,
         int? maximumNumberOfAttendees,
         int? invitationsValidBeforeInHours)
     {
+        var gatheringIdResult = GatheringId.Create(Guid.NewGuid());
+        if (gatheringIdResult.IsFailure)
+            //log
+            return Result.Failure<Gathering>(gatheringIdResult.Error!);
+
         var gathering = new Gathering(
-            Guid.NewGuid(),
+            gatheringIdResult.Value,
             creator,
             type,
             schedualedAtUtc,
@@ -89,7 +96,12 @@ public sealed class Gathering:Entity
         if (ScheduledAtUtc < DateTime.UtcNow)
             return Result.Failure<Invitation>(DomainErrors.Gathering.InvitingCreator);
 
-        var invitation = new Invitation(Guid.NewGuid(), member, this);
+        var invitationIdResult = InvitationId.Create(Guid.NewGuid());
+        if (invitationIdResult.IsFailure)
+            //log
+            return Result.Failure<Invitation>(invitationIdResult.Error!);
+
+        var invitation = new Invitation(invitationIdResult.Value, member, this);
         _invitations.Add(invitation);
         return invitation;
     }
@@ -107,6 +119,8 @@ public sealed class Gathering:Entity
         }
 
         var attendee = invitation.Accept();
+
+        RaiseDomainEvent(new InvitationAcceptedDomainEvent(invitation.Id.Value, Id.Value));
 
         _attendees.Add(attendee);
         NumberOfAttendees++;

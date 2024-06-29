@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace GMS.Domain.Abstractions
 {
-    public interface IInvitationRepository
+    public interface IEmailService
     {
-        void Add(Invitation invitation);
+        Task SendInvitationAcceptedEmailAsync(Gathering gathering, CancellationToken cancellationToken);
     }
 }

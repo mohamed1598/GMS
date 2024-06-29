@@ -22,7 +22,7 @@ public class Result<TValue> : Result
 }
 public class Result
 {
-    private Entity _value;
+    private Entity<ValueObject> _value;
     protected internal Result(bool isSuccess, Error error) {
         if (isSuccess && error != Error.None) throw new InvalidOperationException();
         if (!isSuccess && error == Error.None) throw new InvalidOperationException();

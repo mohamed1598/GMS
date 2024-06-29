@@ -1,10 +1,11 @@
 ﻿using GMS.Domain.Primitives;
+using GMS.Domain.ValueObjects;
 
 namespace GMS.Domain.Entities;
-public sealed class Invitation:Entity
+public sealed class Invitation:Entity<InvitationId>
 {
     public Invitation(
-        Guid id,
+        InvitationId id,
         Member member,
         Gathering gathering
         ):base(id)
@@ -14,12 +15,12 @@ public sealed class Invitation:Entity
         Status = InvitationStatus.Pending;
         CreatedOnUtc = DateTime.UtcNow;
     }
-    protected Invitation():base(Guid.NewGuid())
+    protected Invitation():base(InvitationId.Create(Guid.NewGuid()).Value)
     {
         
     }
-    public Guid GatheringId { get; private set; }
-    public Guid MemberId { get; private set; }
+    public GatheringId GatheringId { get; private set; }
+    public MemberId MemberId { get; private set; }
     public InvitationStatus Status { get; private set; }
     public DateTime CreatedOnUtc { get; private set; }
     public DateTime? ModifiedOnUtc { get; private set; }

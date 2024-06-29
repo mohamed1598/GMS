@@ -8,21 +8,21 @@ using System.Threading.Tasks;
 
 namespace GMS.Domain.Entities
 {
-    public sealed class Member:Entity
+    public sealed class Member:AggregateRoot<MemberId>
     {
-        public Member(Guid id,FirstName firstName, string lastName, string email):base(id)
+        public Member(MemberId id,FirstName firstName, LastName lastName, Email email):base(id)
         {
             FirstName = firstName;
             LastName = lastName;
             Email = email;
         }
-        protected Member():base(Guid.NewGuid())
+        protected Member():base(MemberId.Create(Guid.NewGuid()).Value)
         {
             
         }
 
         public FirstName FirstName { get; set; } = null!;
-        public string LastName { get; set; } = null!;
-        public string Email { get; set; } = null!;
+        public LastName LastName { get; set; } = null!;
+        public Email Email { get; set; } = null!;
     }
 }

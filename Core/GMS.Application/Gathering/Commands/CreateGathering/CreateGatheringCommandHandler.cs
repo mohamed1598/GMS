@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GMS.Domain.ValueObjects;
 
 namespace GMS.Application.Gathering.Commands.CreateGathering
 {
@@ -24,12 +25,17 @@ namespace GMS.Application.Gathering.Commands.CreateGathering
             if (member is null)
                 return Unit.Value;
 
+            var nameResult = Name.Create(request.Name);
+            if (nameResult.IsFailure)
+                //log later
+                return Unit.Value;
+
             var gatheringResult = GatheringEntity.Gathering.Create(
                 Guid.NewGuid(),
                 member,
                 request.Type,
                 request.SchedualedAtUtc,
-                request.Name,
+                nameResult.Value,
                 request.Location,
                 request.MaximumNumberOfAttendees,
                 request.InvitationValidBeforeInHours);
