@@ -23,7 +23,7 @@ namespace GMS.Application.Gathering.Commands.SendInvitation
 
             if (member is null || gathering is null) return Unit.Value;
 
-            var invitationResult = gathering.SendInvitation(member);
+            var invitationResult = gathering.SendInvitation(member.Id);
             if (invitationResult.IsFailure)
                 //log here
                 return Unit.Value;

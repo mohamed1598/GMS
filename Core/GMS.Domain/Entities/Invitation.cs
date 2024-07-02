@@ -6,12 +6,12 @@ public sealed class Invitation:Entity<InvitationId>
 {
     public Invitation(
         InvitationId id,
-        Member member,
-        Gathering gathering
+        MemberId memberId,
+        GatheringId gatheringId
         ):base(id)
     {
-        MemberId = member.Id;
-        GatheringId = gathering.Id;
+        MemberId = memberId;
+        GatheringId = gatheringId;
         Status = InvitationStatus.Pending;
         CreatedOnUtc = DateTime.UtcNow;
     }

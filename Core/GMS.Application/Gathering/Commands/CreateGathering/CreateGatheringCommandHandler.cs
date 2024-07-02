@@ -32,7 +32,7 @@ namespace GMS.Application.Gathering.Commands.CreateGathering
 
             var gatheringResult = GatheringEntity.Gathering.Create(
                 Guid.NewGuid(),
-                member,
+                member.Id,
                 request.Type,
                 request.SchedualedAtUtc,
                 nameResult.Value,

@@ -16,13 +16,13 @@ public sealed class Gathering:AggregateRoot<GatheringId>
     private readonly List<Attendee> _attendees = [];
     internal Gathering(
         GatheringId id,
-        Member creator,
+        MemberId creatorId,
         GatheringType type,
         DateTime schedualedAtUtc,
         Name name,
         string? location):base(id)
     {
-        Creator = creator;
+        CreatorId = creatorId;
         Type = type;
         ScheduledAtUtc = schedualedAtUtc;
         Name = name;
@@ -33,7 +33,7 @@ public sealed class Gathering:AggregateRoot<GatheringId>
     {
         
     }
-    public Member Creator { get; private set; }
+    public MemberId CreatorId { get; private set; }
     public GatheringType Type { get; private set; }
     public Name Name { get; private set; }
     public DateTime ScheduledAtUtc { get; private set; }
@@ -46,7 +46,7 @@ public sealed class Gathering:AggregateRoot<GatheringId>
 
     public static Result<Gathering> Create(
         Guid id,
-        Member creator,
+        MemberId creatorId,
         GatheringType type,
         DateTime schedualedAtUtc,
         Name name,
@@ -61,7 +61,7 @@ public sealed class Gathering:AggregateRoot<GatheringId>
 
         var gathering = new Gathering(
             gatheringIdResult.Value,
-            creator,
+            creatorId,
             type,
             schedualedAtUtc,
             name,
@@ -88,10 +88,10 @@ public sealed class Gathering:AggregateRoot<GatheringId>
         return gathering;
     }
 
-    public Result<Invitation> SendInvitation(Member member)
+    public Result<Invitation> SendInvitation(MemberId memberId)
     {
         //validate
-        if (Creator.Id == member.Id)
+        if (CreatorId == memberId)
             return Result.Failure<Invitation>(DomainErrors.Gathering.InvitingCreator);
         if (ScheduledAtUtc < DateTime.UtcNow)
             return Result.Failure<Invitation>(DomainErrors.Gathering.InvitingCreator);
@@ -101,7 +101,7 @@ public sealed class Gathering:AggregateRoot<GatheringId>
             //log
             return Result.Failure<Invitation>(invitationIdResult.Error!);
 
-        var invitation = new Invitation(invitationIdResult.Value, member, this);
+        var invitation = new Invitation(invitationIdResult.Value, memberId, this.Id);
         _invitations.Add(invitation);
         return invitation;
     }
